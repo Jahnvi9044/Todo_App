@@ -1,40 +1,69 @@
 const express = require('express');
 const app = express();
 const {schema1,schema2} = require('./types');
+const {Todo}  = require('./db');
+
+
 
 app.use(express.json());
 
-app.post("/todo",function(req,res){
-    // add todos 
-    const result = schema1.safeParse(todo);
-    if(result.success)
+app.post("/todo",async function(req,res){
+    // add todos
+    
+    const data = req.body;
+    const result = schema1.safeParse(data);
+    if(!result.success)
     {
-        
+         res.status(411).json(
+         {msg:"Invalid Input"});
+         return ;
     }
-    else 
-    {
-        res.json({msg:"Invalid Input"});
-    }
-});
-app.get("/todos",function(req,res){
+
+    //Put it in mongodb
+    const title = data.title;
+    const description = data.description;
+    const completed = data.completed;  
+     await Todo.create({
+       title,
+       description,
+       completed
+     });
+     res.status(200).json({message:"Todo Successfully added! "});   
+
+   });
+app.get("/todos", async function(req,res){
     // view all added todos 
+
+    const todos = await Todo.find({});
+    res.json({
+        todos:todos
+    });
 });
 
-app.put("/completed",function(req,res){
+app.put("/completed",async function(req,res){
      //marked a todo completed 
-     const result = schema1.safeParse(todo);
-    if(result.success)
-    {
-        
-    }
-    else 
+     const data = req.body;
+     const result = schema2.safeParse(data);
+     console.log(data);
+    if(!result.success)
     {
         res.json({msg:"Invalid Input"});
+        return ;
     }
+    //mark the todo as done 
+      
+    const list  = await Todo.updateMany(
+       { title : data.title } ,
+       { $set: {completed : true}}
+    );
+    res.json({message:"Updated "});
+   
 });
 
+app.listen(3000);
 
 //1 basic boiler plate 
 //2 routes 
 //3 zod
+//4 Mongodb - tablr creation
 
