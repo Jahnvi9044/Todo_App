@@ -24,7 +24,7 @@ const schema1 = zod.object({
 });
 
 const schema2= zod.object({
-    title:zod.string()
+    id:zod.string()
 });
 
 module.exports = {schema1,

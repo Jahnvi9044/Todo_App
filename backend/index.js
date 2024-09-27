@@ -53,8 +53,12 @@ app.put("/completed",async function(req,res){
     //mark the todo as done 
       
     const list  = await Todo.updateMany(
-       { title : data.title } ,
-       { $set: {completed : true}}
+    //    { title : data.title } ,
+    // { $set: {completed : true}}
+    // todos are removed according to _id
+
+    { _id : req.body.id },
+    { completed : true }
     );
     res.json({message:"Updated "});
    
