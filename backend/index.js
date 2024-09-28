@@ -2,8 +2,13 @@ const express = require('express');
 const app = express();
 const {schema1,schema2} = require('./types');
 const {Todo}  = require('./db');
+const cors = require('cors');
 
-
+app.use(cors());
+//this means anybody can hit this backend (this backend will respond to request from any frontend  , unsecure)
+// app.use(cors({
+//     origin:"http://localhost:5173"
+// }));//this allows ony from localhost 5173
 
 app.use(express.json());
 
@@ -53,6 +58,7 @@ app.put("/completed",async function(req,res){
     //mark the todo as done 
       
     const list  = await Todo.updateMany(
+
     //    { title : data.title } ,
     // { $set: {completed : true}}
     // todos are removed according to _id
